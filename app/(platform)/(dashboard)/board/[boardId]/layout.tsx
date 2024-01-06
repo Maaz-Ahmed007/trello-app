@@ -1,21 +1,23 @@
-import { auth } from "@clerk/nextjs";
-import { notFound, redirect } from "next/navigation";
+import { auth } from "@clerk/nextjs"
+import { notFound, redirect } from "next/navigation"
 
-import { db } from "@/lib/db";
+import { db } from "@/lib/db"
 
-import { BoardNavbar } from "./_components/board-navbar";
+import { BoardNavbar } from "./_components/board-navbar"
 
 export async function generateMetadata({
     params
 }: {
-    params: { boardId: string; };
+    params: {
+        boardId: string
+    }
 }) {
-    const { orgId } = auth();
+    const { orgId } = auth()
 
     if (!orgId) {
         return {
             title: "Board",
-        };
+        }
     }
 
     const board = await db.board.findUnique({
@@ -23,24 +25,24 @@ export async function generateMetadata({
             id: params.boardId,
             orgId
         }
-    });
+    })
 
     return {
         title: board?.title || "Board",
-    };
+    }
 }
 
 const BoardIdLayout = async ({
     children,
     params,
 }: {
-    children: React.ReactNode;
-    params: { boardId: string; };
+    children: React.ReactNode
+    params: { boardId: string }
 }) => {
-    const { orgId } = auth();
+    const { orgId } = auth()
 
     if (!orgId) {
-        redirect("/select-org");
+        redirect("/select-org")
     }
 
     const board = await db.board.findUnique({
@@ -48,10 +50,10 @@ const BoardIdLayout = async ({
             id: params.boardId,
             orgId,
         },
-    });
+    })
 
     if (!board) {
-        notFound();
+        notFound()
     }
 
     return (
@@ -65,7 +67,7 @@ const BoardIdLayout = async ({
                 {children}
             </main>
         </div>
-    );
-};
+    )
+}
 
-export default BoardIdLayout;
+export default BoardIdLayout
